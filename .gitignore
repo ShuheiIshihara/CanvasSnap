@@ -101,3 +101,6 @@ $RECYCLE.BIN/
 config.json
 *.backup
 screenshots/
+
+# Claude Code
+.claude/settings.local.json
