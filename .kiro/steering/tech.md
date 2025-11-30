@@ -57,7 +57,9 @@
 ### macOS (v1.0)
 - **Screen Capture**: `screencapture` command via Process.Start
   - Future: ScreenCaptureKit for better performance
-- **Hotkey**: Carbon Framework RegisterEventHotKey (P/Invoke)
+- **Hotkey**: CGEvent API (Quartz Event Services) via P/Invoke
+  - Reason: Carbon Framework deprecated, CGEvent API is modern and officially supported
+  - Requires: Accessibility permission in addition to Screen Recording
 - **Permission**: Screen Recording permission required
 
 ### Windows (Planned)
