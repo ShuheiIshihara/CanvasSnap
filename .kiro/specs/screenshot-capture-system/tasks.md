@@ -14,7 +14,7 @@
 
 ### 1. プロジェクト初期化とDI設定
 
-- [ ] 1.1 (P) .NET 8プロジェクト作成とAvalonia 11.x初期設定
+- [x] 1.1 (P) .NET 8プロジェクト作成とAvalonia 11.x初期設定
   - Avalonia.Desktop、ReactiveUI、SixLabors.ImageSharp、System.Text.Jsonパッケージをインストール
   - プロジェクト構成をMVVMパターンに従って整理（Views/ViewModels/Services/Models/Helpersディレクトリ）
   - nullable reference typesを有効化
