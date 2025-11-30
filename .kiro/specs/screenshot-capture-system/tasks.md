@@ -20,7 +20,7 @@
   - nullable reference typesを有効化
   - _Requirements: 13.2, 13.3_
 
-- [ ] 1.2 (P) DIコンテナ設定とプラットフォーム検出
+- [x] 1.2 (P) DIコンテナ設定とプラットフォーム検出
   - Microsoft.Extensions.DependencyInjectionを使用してサービス登録
   - OperatingSystem.IsMacOS()でプラットフォームを検出し、macOS実装を注入
   - App.xaml.csでServiceProviderを初期化

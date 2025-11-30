@@ -6,14 +6,38 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using CanvasSnap.ViewModels;
 using CanvasSnap.Views;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CanvasSnap;
 
 public partial class App : Application
 {
+    public IServiceProvider Services { get; private set; } = null!;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        ConfigureServices();
+    }
+
+    private void ConfigureServices()
+    {
+        var services = new ServiceCollection();
+
+        // プラットフォーム検出とサービス登録
+        if (OperatingSystem.IsMacOS())
+        {
+            // macOS固有のサービス登録（タスク5以降で実装）
+        }
+        else if (OperatingSystem.IsWindows())
+        {
+            // Windows固有のサービス登録（Phase 2）
+        }
+
+        // 共通サービスの登録（タスク3以降で実装）
+
+        Services = services.BuildServiceProvider();
     }
 
     public override void OnFrameworkInitializationCompleted()
