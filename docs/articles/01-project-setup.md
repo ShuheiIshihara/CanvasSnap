@@ -1,5 +1,5 @@
 ---
-title: "CanvasSnap 開発記録 #1: .NET 8 + Avalonia MVVM プロジェクトのセットアップ"
+title: "CanvasSnap 開発記録 #1: .NET 10 + Avalonia MVVM プロジェクトのセットアップ"
 emoji: "🖼️"
 type: "tech"
 topics: ["dotnet", "avalonia", "csharp", "mvvm", "reactiveui"]
@@ -8,44 +8,36 @@ published: false
 
 ## はじめに
 
-本記事は、ゲームスクリーンショット撮影アプリ「CanvasSnap」の開発記録シリーズの第1回です。Phase 1（macOS MVP）の実装タスク 1.1「.NET 8プロジェクト作成とAvalonia 11.x初期設定」の作業内容を記録します。
+本記事は、ゲームスクリーンショット撮影アプリ「CanvasSnap」の開発記録シリーズの第1回です。Phase 1（macOS MVP）の実装タスク 1.1「.NET 10プロジェクト作成とAvalonia 11.x初期設定」の作業内容を記録します。
 
 ### タスク概要
 
-- ✅ .NET 8.0 プロジェクトの作成
+- ✅ .NET 10.0 プロジェクトの作成
 - ✅ Avalonia 11.x MVVM テンプレートの適用
 - ✅ 必要なパッケージのインストール
 - ✅ MVVM ディレクトリ構造の構築
 - ✅ nullable reference types の有効化
 
-**対応要件**: Requirements 13.2（.NET 8.0以降で実装）, 13.3（Avalonia 11.xを使用してUIを実装）
+**対応要件**: Requirements 13.2（.NET 10.0以降で実装）, 13.3（Avalonia 11.xを使用してUIを実装）
 
 ## 環境構築
 
-### 1. .NET 8 SDK のインストール
+### 1. .NET 10 SDK のインストール
 
-macOS 環境のため、Homebrew を使用してインストールしました。
-
-```bash
-brew install dotnet@8
-```
+macOS 環境のため、.NET 10 SDK を手動でインストールしました。
 
 インストール後、環境変数を設定：
 
 ```bash
-export PATH="/opt/homebrew/opt/dotnet@8/bin:$PATH"
-export DOTNET_ROOT="/opt/homebrew/opt/dotnet@8/libexec"
+export PATH="/usr/local/share/dotnet:$PATH"
+export DOTNET_ROOT="/usr/local/share/dotnet"
 ```
-
-:::message
-dotnet@8 は keg-only のため、PATH に明示的に追加する必要があります。永続化する場合は `~/.zshrc` に記述してください。
-:::
 
 バージョン確認：
 
 ```bash
 $ dotnet --version
-8.0.122
+10.0.100
 ```
 
 ### 2. Avalonia テンプレートのインストール
@@ -77,7 +69,7 @@ dotnet new avalonia.mvvm -n CanvasSnap
 ```
 
 :::message alert
-Avalonia テンプレート（11.3.9）はデフォルトで .NET 9.0 をターゲットにしています。.NET 8.0 SDK では復元に失敗するため、修正が必要です。
+Avalonia テンプレート（11.3.9）はデフォルトで .NET 9.0 をターゲットにしています。.NET 10.0 SDK では復元に失敗するため、修正が必要です。
 :::
 
 ### 4. TargetFramework の修正
@@ -88,7 +80,7 @@ Avalonia テンプレート（11.3.9）はデフォルトで .NET 9.0 をター�
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
 -   <TargetFramework>net9.0</TargetFramework>
-+   <TargetFramework>net8.0</TargetFramework>
++   <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     ...
   </PropertyGroup>
@@ -150,7 +142,7 @@ dotnet build
 
 ```
 MSBuild のバージョン 17.8.43+f0cbb1397 (.NET)
-  CanvasSnap -> /Users/.../CanvasSnap/src/CanvasSnap/bin/Debug/net8.0/CanvasSnap.dll
+  CanvasSnap -> /Users/.../CanvasSnap/src/CanvasSnap/bin/Debug/net10.0/CanvasSnap.dll
 
 ビルドに成功しました。
     1 個の警告
@@ -215,7 +207,7 @@ CanvasSnap/
 :::message
 **System.Text.Json について**
 
-.NET 8 には標準で含まれているため、明示的なパッケージ参照は不要です。設定ファイルの JSON シリアライズに使用します。
+.NET 10 には標準で含まれているため、明示的なパッケージ参照は不要です。設定ファイルの JSON シリアライズに使用します。
 :::
 
 ## プロジェクト設定の確認
@@ -282,9 +274,9 @@ warning NU1903: Package 'SixLabors.ImageSharp' 3.1.6 has a known high severity v
 
 ## まとめ
 
-タスク 1.1 では、.NET 8 + Avalonia 11.x + ReactiveUI の基盤を構築しました。主なポイント：
+タスク 1.1 では、.NET 10 + Avalonia 11.x + ReactiveUI の基盤を構築しました。主なポイント：
 
-✅ .NET 8.0.122 SDK のインストールと設定
+✅ .NET 10.0.100 SDK のインストールと設定
 ✅ Avalonia MVVM テンプレートの適用と修正
 ✅ ReactiveUI への移行（CommunityToolkit.Mvvm から）
 ✅ ImageSharp 脆弱性の修正（3.1.6 → 3.1.12）

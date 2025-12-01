@@ -147,7 +147,7 @@
 
 #### Acceptance Criteria
 1. The CanvasSnapアプリケーション shall macOS Monterey 12.0以降で動作する
-2. The CanvasSnapアプリケーション shall .NET 8.0以降で実装する
+2. The CanvasSnapアプリケーション shall .NET 10.0以降で実装する
 3. The CanvasSnapアプリケーション shall Avalonia 11.xを使用してUIを実装する
 4. The CanvasSnapアプリケーション shall プラットフォーム依存機能をインターフェースで抽象化する
 5. Where Windows対応が実装される、the CanvasSnapアプリケーション shall Windows 10/11で動作する

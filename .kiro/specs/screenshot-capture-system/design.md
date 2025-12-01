@@ -135,7 +135,7 @@ graph TB
    - 境界: インターフェース境界、実装はDIで注入
 
 **Steering準拠**:
-- `.kiro/steering/tech.md`: .NET 8, Avalonia 11, MVVM+ReactiveUI, ImageSharp使用
+- `.kiro/steering/tech.md`: .NET 10, Avalonia 11, MVVM+ReactiveUI, ImageSharp使用
 - `.kiro/steering/structure.md`: MVVMディレクトリ構成、サービスインターフェース、DI活用
 - `.kiro/steering/product.md`: 非侵襲的設計、プライバシー保護、低リソース常駐
 
@@ -145,7 +145,7 @@ graph TB
 |-------|------------------|-----------------|-------|
 | **UI Framework** | Avalonia 11.x | クロスプラットフォームUI、XAML定義、システムトレイ統合 | Req 13-3準拠、macOS/Windows対応 |
 | **UI Pattern** | ReactiveUI 19.x | MVVM実装、リアクティブプロパティ、コマンドバインディング | Avaloniaベストプラクティス |
-| **Runtime** | .NET 8.0 | アプリケーションランタイム、P/Invoke、プロセス管理 | Req 13-2準拠 |
+| **Runtime** | .NET 10.0 | アプリケーションランタイム、P/Invoke、プロセス管理 | Req 13-2準拠 |
 | **Image Processing** | SixLabors.ImageSharp 3.x | PNG保存、マスク適用、アルファ合成 | クロスプラットフォーム、高速処理 |
 | **DI Container** | Microsoft.Extensions.DependencyInjection | サービス登録、ライフタイム管理、プラットフォーム切り替え | .NET標準 |
 | **Serialization** | System.Text.Json | 設定ファイルJSON読み書き | .NET標準、高速 |

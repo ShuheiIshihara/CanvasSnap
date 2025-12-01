@@ -10,7 +10,7 @@
 
 ## Core Technologies
 
-- **Language**: C# (.NET 8.0)
+- **Language**: C# (.NET 10.0)
 - **UI Framework**: Avalonia 11.x (cross-platform desktop UI)
 - **MVVM**: ReactiveUI for reactive bindings
 - **Image Processing**: SixLabors.ImageSharp (System.Drawing.Common avoided due to macOS/.NET 6+ deprecation)
@@ -42,7 +42,7 @@
 ## Development Environment
 
 ### Required Tools
-- .NET SDK 8.0+
+- .NET SDK 10.0+
 - IDE: Visual Studio, Rider, or VS Code with C# extensions
 
 ### Common Commands
