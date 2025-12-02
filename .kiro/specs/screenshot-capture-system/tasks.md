@@ -29,7 +29,7 @@
 
 ### 2. ドメインモデル実装
 
-- [ ] 2.1 (P) 座標系とキャプチャ設定のモデル定義
+- [x] 2.1 (P) 座標系とキャプチャ設定のモデル定義
   - PhysicalCoordinates、LogicalCoordinatesレコード型を定義（HiDPI変換用）
   - CaptureRegionレコード型を定義（X, Y, Width, Heightの物理ピクセル座標）
   - MaskRegionレコード型を定義（キャプチャ領域左上を原点とする相対座標）
