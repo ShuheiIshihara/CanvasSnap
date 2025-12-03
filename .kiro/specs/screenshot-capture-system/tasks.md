@@ -51,7 +51,7 @@
 
 ### 3. 設定永続化サービス実装
 
-- [ ] 3.1 (P) ISettingsServiceインターフェースと実装
+- [x] 3.1 (P) ISettingsServiceインターフェースと実装
   - LoadSettingsAsync、SaveSettingsAsync、GetDefaultSettings、GetConfigFilePathメソッドを定義
   - macOS: `~/Library/Application Support/CanvasSnap/config.json`、Windows: `%AppData%\CanvasSnap\config.json`のパス取得
   - デフォルト設定（Cmd+Shift+S、ピクチャフォルダ）を返す実装

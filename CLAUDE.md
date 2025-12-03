@@ -20,6 +20,18 @@ Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life
 ## Development Guidelines
 - Think in English, generate responses in Japanese. All Markdown content written to project files (e.g., requirements.md, design.md, tasks.md, research.md, validation reports) MUST be written in the target language configured for this specification (see spec.json.language).
 
+## Development Environment
+
+### .NET 10.0 Configuration
+This project requires .NET 10.0 SDK. Set the following environment variables before running commands:
+
+```bash
+export DOTNET_ROOT="/usr/local/share/dotnet"
+export PATH="/usr/local/share/dotnet:$PATH"
+```
+
+These environment variables are required for all `dotnet` commands (build, test, run).
+
 ## Minimal Workflow
 - Phase 0 (optional): `/kiro:steering`, `/kiro:steering-custom`
 - Phase 1 (Specification):
