@@ -37,13 +37,13 @@
   - CaptureSettings集約ルートを定義（Region, MaskRegions, HotkeyConfig, SaveDirectory, IsMaskEnabled）
   - _Requirements: 2.4, 3.4, 4.2, 5.3, 7.2_
 
-- [ ] 2.2 (P) ディスプレイ情報モデルとエラー型定義
+- [x] 2.2 (P) ディスプレイ情報モデルとエラー型定義
   - DisplayInfoレコード型を定義（Id, Name, X, Y, Width, Height, ScaleFactor, IsPrimary）
   - CaptureError列挙型を定義（PermissionDenied, DisplayUnavailable, CaptureFailed, SaveFailed, Unknown）
   - Result<T, E>型を定義（SuccessまたはErrorを保持）
   - _Requirements: 2.7, 3.1_
 
-- [ ] 2.3 (P) 例外階層の定義
+- [x] 2.3 (P) 例外階層の定義
   - CanvasSnapException基底クラスを定義
   - ScreenCaptureException、ImageProcessingException、SettingsException、PermissionDeniedExceptionを定義
   - PermissionDeniedExceptionにPermissionType（ScreenRecording, Accessibility）を追加
