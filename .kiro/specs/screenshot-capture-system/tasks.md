@@ -94,7 +94,7 @@
   - 座標系をプライマリディスプレイ左上原点に変換
   - _Requirements: 2.7, 3.1, 3.2_
 
-- [ ] 5.3 座標変換とディスプレイ構成変更検出
+- [x] 5.3 座標変換とディスプレイ構成変更検出
   - LogicalToPhysical、PhysicalToLogicalで座標変換を実装（ScaleFactor考慮）
   - NSWorkspace.Notifications.DidChangeScreenParametersNotificationを監視
   - ディスプレイ構成変更時にDisplayConfigurationChangedイベントを発火
