@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using CanvasSnap.Exceptions;
 
 namespace CanvasSnap.Services;
 
@@ -40,22 +41,4 @@ public interface IPermissionService
     /// <param name="permissionType">開く権限設定の種類</param>
     /// <returns>非同期タスク</returns>
     Task OpenPermissionSettingsAsync(PermissionType permissionType);
-}
-
-/// <summary>
-/// 権限タイプ列挙型
-/// </summary>
-public enum PermissionType
-{
-    /// <summary>
-    /// Screen Recording権限（画面録画）
-    /// macOS: Privacy_ScreenCapture
-    /// </summary>
-    ScreenRecording,
-
-    /// <summary>
-    /// アクセシビリティ権限
-    /// macOS: Privacy_Accessibility
-    /// </summary>
-    Accessibility
 }

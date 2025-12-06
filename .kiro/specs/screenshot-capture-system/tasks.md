@@ -116,7 +116,7 @@
 
 ### 7. スクリーンキャプチャサービス実装（macOS）
 
-- [ ] 7.1 IScreenCaptureServiceインターフェース定義
+- [x] 7.1 IScreenCaptureServiceインターフェース定義
   - CaptureRegionAsyncメソッドを定義（CaptureRegionを受け取りbyte[]を返す）
   - ScreenCaptureException、PermissionDeniedExceptionをスロー可能と定義
   - _Requirements: 1.1, 1.7_

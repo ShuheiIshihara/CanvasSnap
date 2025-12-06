@@ -1,3 +1,4 @@
+using CanvasSnap.Exceptions;
 using CanvasSnap.Services;
 using Xunit;
 
