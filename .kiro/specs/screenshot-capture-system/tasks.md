@@ -103,7 +103,7 @@
 
 ### 6. 権限管理サービス実装（macOS）
 
-- [ ] 6.1 IPermissionServiceインターフェース定義
+- [x] 6.1 IPermissionServiceインターフェース定義
   - CheckPermissionsAsync、CheckScreenRecordingPermissionAsync、CheckAccessibilityPermissionAsync、OpenPermissionSettingsAsyncメソッドを定義
   - _Requirements: 12.1, 12.2_
 
