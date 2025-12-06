@@ -66,7 +66,7 @@
 
 ### 4. 画像処理サービス実装
 
-- [ ] 4.1 (P) IImageProcessingServiceインターフェースと実装
+- [x] 4.1 (P) IImageProcessingServiceインターフェースと実装
   - ApplyMaskAsyncメソッドを定義（byte[]画像データとMaskRegion[]を受け取る）
   - ImageSharpのImage.LoadAsync<Rgba32>で画像を読み込み
   - Mutate(ctx => ctx.Fill(Color.Black, rectangle))で黒塗りマスクを適用
