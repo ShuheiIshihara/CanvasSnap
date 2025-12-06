@@ -184,4 +184,165 @@ public class ImageProcessingServiceTests
         Assert.Equal(0, pixel.G);
         Assert.Equal(0, pixel.B);
     }
+
+    #region Task 4.2: マスク領域の検証とエラーハンドリング
+
+    /// <summary>
+    /// マスク領域のX座標が負の場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.1 (マスク領域が選択された、マスク座標をキャプチャ領域左上を(0,0)とする相対座標で保存する)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_MaskRegionWithNegativeX_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var imageData = await CreateTestImageAsync(100, 100, new Rgba32(255, 255, 255));
+        var masks = new[] { new MaskRegion(-10, 10, 20, 20) };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData, masks));
+        Assert.Contains("境界外", exception.Message);
+    }
+
+    /// <summary>
+    /// マスク領域のY座標が負の場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.1
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_MaskRegionWithNegativeY_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var imageData = await CreateTestImageAsync(100, 100, new Rgba32(255, 255, 255));
+        var masks = new[] { new MaskRegion(10, -10, 20, 20) };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData, masks));
+        Assert.Contains("境界外", exception.Message);
+    }
+
+    /// <summary>
+    /// マスク領域が画像の右端を超える場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.2 (マスク領域の検証)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_MaskRegionExceedsRightBoundary_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var imageData = await CreateTestImageAsync(100, 100, new Rgba32(255, 255, 255));
+        var masks = new[] { new MaskRegion(90, 10, 20, 20) }; // 90 + 20 = 110 > 100
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData, masks));
+        Assert.Contains("境界外", exception.Message);
+    }
+
+    /// <summary>
+    /// マスク領域が画像の下端を超える場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.2 (マスク領域の検証)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_MaskRegionExceedsBottomBoundary_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var imageData = await CreateTestImageAsync(100, 100, new Rgba32(255, 255, 255));
+        var masks = new[] { new MaskRegion(10, 90, 20, 20) }; // 90 + 20 = 110 > 100
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData, masks));
+        Assert.Contains("境界外", exception.Message);
+    }
+
+    /// <summary>
+    /// 複数マスク領域のうち1つでも境界外の場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.2 (複数マスク領域の順次処理、エラーハンドリング)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_MultipleMasksWithOneOutOfBounds_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var imageData = await CreateTestImageAsync(100, 100, new Rgba32(255, 255, 255));
+        var masks = new[]
+        {
+            new MaskRegion(10, 10, 20, 20), // 正常
+            new MaskRegion(95, 10, 20, 20)  // 境界外
+        };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData, masks));
+        Assert.Contains("境界外", exception.Message);
+    }
+
+    /// <summary>
+    /// 無効な画像データの場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.2 (画像データが無効な場合の例外処理)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_InvalidImageData_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var invalidImageData = new byte[] { 0x00, 0x01, 0x02, 0x03 }; // 無効なPNGデータ
+        var masks = new[] { new MaskRegion(10, 10, 20, 20) };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData: invalidImageData, maskRegions: masks));
+        Assert.Contains("画像データの読み込みに失敗", exception.Message);
+    }
+
+    /// <summary>
+    /// 空の画像データの場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.2 (画像データが無効な場合の例外処理)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_EmptyImageData_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var emptyImageData = Array.Empty<byte>();
+        var masks = new[] { new MaskRegion(10, 10, 20, 20) };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData: emptyImageData, maskRegions: masks));
+        Assert.Contains("画像データの読み込みに失敗", exception.Message);
+    }
+
+    /// <summary>
+    /// マスク領域の幅が0以下の場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.2 (マスク領域の検証)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_MaskRegionWithZeroWidth_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var imageData = await CreateTestImageAsync(100, 100, new Rgba32(255, 255, 255));
+        var masks = new[] { new MaskRegion(10, 10, 0, 20) };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData, masks));
+        Assert.Contains("0以下", exception.Message);
+    }
+
+    /// <summary>
+    /// マスク領域の高さが0以下の場合、ImageProcessingExceptionをスロー
+    /// Requirements: 4.2 (マスク領域の検証)
+    /// </summary>
+    [Fact]
+    public async Task ApplyMaskAsync_MaskRegionWithZeroHeight_ThrowsImageProcessingException()
+    {
+        // Arrange
+        var imageData = await CreateTestImageAsync(100, 100, new Rgba32(255, 255, 255));
+        var masks = new[] { new MaskRegion(10, 10, 20, 0) };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CanvasSnap.Exceptions.ImageProcessingException>(
+            () => _service.ApplyMaskAsync(imageData, masks));
+        Assert.Contains("0以下", exception.Message);
+    }
+
+    #endregion
 }
