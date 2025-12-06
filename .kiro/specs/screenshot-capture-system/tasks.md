@@ -87,7 +87,7 @@
   - DisplayInfoレコード型の返却
   - _Requirements: 2.6, 3.1, 3.3_
 
-- [ ] 5.2 macOS実装（NSScreen APIを使用）
+- [x] 5.2 macOS実装（NSScreen APIを使用）
   - NSScreen.Screensで全ディスプレイ情報を取得
   - プライマリディスプレイを特定（NSScreen.MainScreen）
   - ScaleFactorをNSScreen.BackingScaleFactorから取得（Retina: 2.0）
