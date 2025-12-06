@@ -107,7 +107,7 @@
   - CheckPermissionsAsync、CheckScreenRecordingPermissionAsync、CheckAccessibilityPermissionAsync、OpenPermissionSettingsAsyncメソッドを定義
   - _Requirements: 12.1, 12.2_
 
-- [ ] 6.2 macOS実装（TCC APIを使用）
+- [x] 6.2 macOS実装（TCC APIを使用）
   - CGPreflightScreenCaptureAccess、CGRequestScreenCaptureAccessでScreen Recording権限をチェック
   - AXIsProcessTrustedでアクセシビリティ権限をチェック
   - `open x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture`でシステム設定を開く
