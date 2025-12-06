@@ -8,11 +8,12 @@ namespace CanvasSnap.Services;
 
 /// <summary>
 /// 設定ファイルの読み書きを実装するサービス
-/// Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
+/// Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7
 /// </summary>
 public class SettingsService : ISettingsService
 {
     private readonly string? _customConfigDirectory;
+    private readonly INotificationService? _notificationService;
 
     /// <summary>
     /// デフォルトコンストラクタ（通常使用）
@@ -31,9 +32,30 @@ public class SettingsService : ISettingsService
     }
 
     /// <summary>
+    /// テスト用コンストラクタ（カスタムディレクトリと通知サービスを指定）
+    /// </summary>
+    /// <param name="customConfigDirectory">カスタム設定ディレクトリ（テスト用）</param>
+    /// <param name="notificationService">通知サービス（破損検出時の通知用）</param>
+    public SettingsService(string customConfigDirectory, INotificationService notificationService)
+    {
+        _customConfigDirectory = customConfigDirectory;
+        _notificationService = notificationService;
+    }
+
+    /// <summary>
+    /// 本番用コンストラクタ（通知サービスを指定）
+    /// </summary>
+    /// <param name="notificationService">通知サービス（破損検出時の通知用）</param>
+    public SettingsService(INotificationService notificationService)
+    {
+        _notificationService = notificationService;
+    }
+
+    /// <summary>
     /// 設定ファイルを読み込む
     /// Requirements: 7.1 (アプリケーション起動時に設定ファイルを自動的に読み込む)
     /// Requirements: 7.5 (設定ファイルのJSONパースに失敗した場合はデフォルト設定で起動)
+    /// Requirements: 7.7 (設定ファイル破損により復元した場合、ユーザーに通知し設定の再構成を促す)
     /// </summary>
     public async Task<CaptureSettings> LoadSettingsAsync()
     {
@@ -62,6 +84,9 @@ public class SettingsService : ISettingsService
             var backupPath = configPath + ".backup";
             File.Move(configPath, backupPath, overwrite: true);
 
+            // Requirements: 7.7 (設定ファイル破損により復元した場合、ユーザーに通知し設定の再構成を促す)
+            await NotifySettingsCorruptionAsync();
+
             // Requirements: 7.5 (デフォルト設定で起動)
             return GetDefaultSettings();
         }
@@ -69,6 +94,20 @@ public class SettingsService : ISettingsService
         {
             // その他のエラー（IOエラーなど）もデフォルト設定で継続
             return GetDefaultSettings();
+        }
+    }
+
+    /// <summary>
+    /// 設定ファイル破損時にユーザーに通知を発行
+    /// Requirements: 7.7 (設定ファイル破損により復元した場合、ユーザーに通知し設定の再構成を促す)
+    /// </summary>
+    private async Task NotifySettingsCorruptionAsync()
+    {
+        if (_notificationService != null)
+        {
+            await _notificationService.ShowNotificationAsync(
+                "設定ファイルが破損していたため、デフォルト設定で起動しました。設定を再構成してください。",
+                NotificationType.Warning);
         }
     }
 

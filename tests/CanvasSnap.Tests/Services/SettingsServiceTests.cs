@@ -1,17 +1,19 @@
 using System.Text.Json;
 using CanvasSnap.Models;
 using CanvasSnap.Services;
+using Moq;
 using Xunit;
 
 namespace CanvasSnap.Tests.Services;
 
 /// <summary>
 /// ISettingsServiceの単体テスト
-/// Requirements: 7.1, 7.2, 7.3, 7.4
+/// Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7
 /// </summary>
 public class SettingsServiceTests : IDisposable
 {
     private readonly string _testDirectory;
+    private readonly Mock<INotificationService> _mockNotificationService;
     private readonly SettingsService _service;
 
     public SettingsServiceTests()
@@ -20,7 +22,8 @@ public class SettingsServiceTests : IDisposable
         _testDirectory = Path.Combine(Path.GetTempPath(), "CanvasSnapTests", Guid.NewGuid().ToString());
         Directory.CreateDirectory(_testDirectory);
 
-        _service = new SettingsService(_testDirectory);
+        _mockNotificationService = new Mock<INotificationService>();
+        _service = new SettingsService(_testDirectory, _mockNotificationService.Object);
     }
 
     public void Dispose()
@@ -164,5 +167,87 @@ public class SettingsServiceTests : IDisposable
 
         // 破損ファイルが.backupとして保存されていること
         Assert.True(File.Exists(configPath + ".backup"));
+    }
+
+    /// <summary>
+    /// 設定ファイルが破損している場合、ユーザーに通知を発行する
+    /// Requirements: 7.7 (設定ファイル破損により復元した場合、ユーザーに通知し設定の再構成を促す)
+    /// </summary>
+    [Fact]
+    public async Task LoadSettingsAsync_WhenJsonIsCorrupted_NotifiesUser()
+    {
+        // Arrange
+        var configPath = _service.GetConfigFilePath();
+        var configDir = Path.GetDirectoryName(configPath);
+        if (!Directory.Exists(configDir))
+        {
+            Directory.CreateDirectory(configDir!);
+        }
+
+        // 不正なJSONを書き込む（破損ファイルをシミュレート）
+        await File.WriteAllTextAsync(configPath, "{ invalid json }");
+
+        // Act
+        await _service.LoadSettingsAsync();
+
+        // Assert - 通知が発行されること
+        _mockNotificationService.Verify(
+            n => n.ShowNotificationAsync(
+                It.Is<string>(msg => msg.Contains("設定ファイル") || msg.Contains("デフォルト設定")),
+                NotificationType.Warning),
+            Times.Once);
+    }
+
+    /// <summary>
+    /// 設定ファイルが正常な場合、通知は発行されない
+    /// </summary>
+    [Fact]
+    public async Task LoadSettingsAsync_WhenJsonIsValid_DoesNotNotify()
+    {
+        // Arrange
+        var validSettings = new CaptureSettings
+        {
+            Region = new CaptureRegion(0, 0, 1920, 1080),
+            HotkeyConfig = new HotkeyConfig(HotkeyModifiers.Control | HotkeyModifiers.Shift, 1),
+            SaveDirectory = "/tmp/screenshots",
+            IsMaskEnabled = false,
+            MaskRegions = Array.Empty<MaskRegion>()
+        };
+        await _service.SaveSettingsAsync(validSettings);
+
+        // Act
+        await _service.LoadSettingsAsync();
+
+        // Assert - 通知は発行されないこと
+        _mockNotificationService.Verify(
+            n => n.ShowNotificationAsync(It.IsAny<string>(), It.IsAny<NotificationType>()),
+            Times.Never);
+    }
+
+    /// <summary>
+    /// 通知サービスがnullの場合でも、破損検出時に例外をスローしない
+    /// </summary>
+    [Fact]
+    public async Task LoadSettingsAsync_WhenNotificationServiceIsNull_DoesNotThrow()
+    {
+        // Arrange
+        var serviceWithoutNotification = new SettingsService(_testDirectory);
+        var configPath = serviceWithoutNotification.GetConfigFilePath();
+        var configDir = Path.GetDirectoryName(configPath);
+        if (!Directory.Exists(configDir))
+        {
+            Directory.CreateDirectory(configDir!);
+        }
+
+        // 不正なJSONを書き込む
+        await File.WriteAllTextAsync(configPath, "{ invalid json }");
+
+        // Act & Assert - 例外がスローされないこと
+        var exception = await Record.ExceptionAsync(() => serviceWithoutNotification.LoadSettingsAsync());
+        Assert.Null(exception);
+
+        // デフォルト設定が返されること
+        var settings = await serviceWithoutNotification.LoadSettingsAsync();
+        Assert.NotNull(settings);
     }
 }
