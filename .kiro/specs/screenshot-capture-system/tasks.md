@@ -82,7 +82,7 @@
 
 ### 5. ディスプレイサービス実装（macOS）
 
-- [ ] 5.1 IDisplayServiceインターフェース定義
+- [x] 5.1 IDisplayServiceインターフェース定義
   - GetAllDisplaysAsync、GetDisplayInfoAsync、LogicalToPhysical、PhysicalToLogical、DisplayConfigurationChangedイベントを定義
   - DisplayInfoレコード型の返却
   - _Requirements: 2.6, 3.1, 3.3_
