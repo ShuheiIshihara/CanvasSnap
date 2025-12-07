@@ -121,7 +121,7 @@
   - ScreenCaptureException、PermissionDeniedExceptionをスロー可能と定義
   - _Requirements: 1.1, 1.7_
 
-- [ ] 7.2 macOS実装（screencaptureコマンドを使用）
+- [x] 7.2 macOS実装（screencaptureコマンドを使用）
   - Process.Startで`screencapture -R<x>,<y>,<w>,<h> -x -t png <tempFile>`を実行
   - 一時ファイルにPNGを保存し、File.ReadAllBytesAsyncで読み込む
   - 終了コードが0以外の場合はScreenCaptureExceptionをスロー
