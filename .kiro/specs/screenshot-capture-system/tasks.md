@@ -136,19 +136,19 @@
 
 ### 8. ホットキーサービス実装（macOS）
 
-- [ ] 8.1 IHotkeyServiceインターフェース定義
+- [x] 8.1 IHotkeyServiceインターフェース定義
   - RegisterHotkeyAsync、UnregisterHotkeyAsync、HotkeyPressedイベントを定義
   - HotkeyConflictException、HotkeyRegistrationExceptionを定義
   - _Requirements: 5.1, 5.4, 5.6_
 
-- [ ] 8.2 macOS実装（CGEvent APIを使用）
+- [x] 8.2 macOS実装（CGEvent APIを使用）
   - `macos-global-hotkey-final-report.md`の完全な実装コードを参照
   - CFRunLoop専用スレッドを作成し、CGEventTapCreateでイベントタップを設定
   - EventCallbackでキーコードと修飾キーを判定し、HotkeyConfigとマッチすればHotkeyPressedイベントを発火
   - UnregisterHotkeyAsyncでCFRunLoopStop、CGEventTapEnable(false)、リソース解放を実施
   - _Requirements: 5.1, 5.2, 5.3, 5.5_
 
-- [ ] 8.3 ホットキー競合検出とエラー処理
+- [x] 8.3 ホットキー競合検出とエラー処理
   - OS予約ショートカットとの競合検出（CGEventTapCreate失敗時）
   - HotkeyConflictExceptionをスローし、ユーザーに別の組み合わせを促す
   - 登録失敗時にHotkeyRegistrationExceptionをスロー
