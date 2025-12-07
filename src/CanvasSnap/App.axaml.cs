@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
@@ -16,6 +17,7 @@ namespace CanvasSnap;
 public partial class App : Application
 {
     public IServiceProvider Services { get; private set; } = null!;
+    private MainWindowViewModel? _mainWindowViewModel;
 
     public override void Initialize()
     {
@@ -68,9 +70,18 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
+
+            // MainWindowViewModelを取得して保持
+            _mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
+
+            // バックグラウンド常駐設定 (Requirement 9.1, 9.2)
+            // ShowInTaskbar=false: タスクバーに表示しない
+            // WindowState=Minimized: 最小化状態で起動
             desktop.MainWindow = new MainWindow
             {
-                DataContext = Services.GetRequiredService<MainWindowViewModel>(),
+                DataContext = _mainWindowViewModel,
+                ShowInTaskbar = false,
+                WindowState = WindowState.Minimized,
             };
         }
 
@@ -88,5 +99,21 @@ public partial class App : Application
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
+    }
+
+    /// <summary>
+    /// トレイアイコンの「設定」メニュークリックハンドラ (Requirement 9.3, 9.4)
+    /// </summary>
+    private void OnShowSettings(object? sender, EventArgs e)
+    {
+        _mainWindowViewModel?.ShowSettingsCommand.Execute(null);
+    }
+
+    /// <summary>
+    /// トレイアイコンの「終了」メニュークリックハンドラ (Requirement 9.5)
+    /// </summary>
+    private void OnExit(object? sender, EventArgs e)
+    {
+        _mainWindowViewModel?.ExitCommand.Execute(null);
     }
 }

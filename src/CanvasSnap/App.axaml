@@ -8,8 +8,23 @@
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+
+    <!-- システムトレイアイコン設定 (Requirement 9.1-9.5) -->
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon Icon="/Assets/avalonia-logo.ico" ToolTipText="CanvasSnap">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="設定" Click="OnShowSettings" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="終了" Click="OnExit" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
+    </TrayIcon.Icons>
 </Application>

@@ -217,7 +217,7 @@
 
 ### 12. UI層実装（Views）
 
-- [ ] 12.1 App.axamlとApp.xaml.csの実装
+- [x] 12.1 App.axamlとApp.xaml.csの実装
   - TrayIconをApp.axamlで定義（<TrayIcon.Icons>、コンテキストメニュー）
   - App.xaml.csでDIコンテナを初期化し、プラットフォーム別サービスを登録
   - MainWindowViewModelをDIから取得し、DataContextに設定
