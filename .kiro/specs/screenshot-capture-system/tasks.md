@@ -170,11 +170,12 @@
 
 ### 10. CaptureOrchestrator実装
 
-- [ ] 10.1 CaptureOrchestratorクラスの実装
+- [x] 10.1 CaptureOrchestratorクラスの実装
   - ExecuteCaptureAsyncメソッドをdesign.mdの実装例に従って実装
   - 権限チェック → ディスプレイ可用性確認 → キャプチャ → マスク適用 → ファイル保存 → 通知のフローを実装
   - すべての例外をtry-catchでキャッチし、Result<string, CaptureError>に変換
   - PermissionDeniedException、ScreenCaptureException、IOException、Exceptionを個別に処理
+  - GenerateFilePathメソッドで基本的なファイル名生成（screenshot_yyyyMMdd_HHmmssfff.png形式）
   - _Requirements: 1.1, 6.1, 6.6, 10.1_
 
 - [ ] 10.2 ファイル保存とファイル名生成
