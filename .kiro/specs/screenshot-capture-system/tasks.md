@@ -156,14 +156,15 @@
 
 ### 9. 通知サービス実装（macOS）
 
-- [ ] 9.1 (P) INotificationServiceインターフェース定義
+- [x] 9.1 (P) INotificationServiceインターフェース定義
   - ShowNotificationAsync（軽微なエラー・成功メッセージ）、ShowCriticalErrorAsync（クリティカルエラーダイアログ）を定義
   - NotificationType列挙型を定義（Info, Success, Warning, Error）
   - _Requirements: 10.1, 10.2, 10.3, 10.4_
 
-- [ ] 9.2 (P) macOS実装（UNUserNotificationCenterを使用）
-  - UNUserNotificationCenterでOS標準通知を表示
-  - ShowCriticalErrorAsyncでAvaloniaのMessageBoxまたはNSAlertを使用
+- [x] 9.2 (P) macOS実装（UNUserNotificationCenterを使用）
+  - osascript コマンドでAppleScriptを実行して通知・ダイアログを表示
+  - ShowNotificationAsync: `display notification` コマンドでOS標準通知を表示
+  - ShowCriticalErrorAsync: `display dialog` コマンドでダイアログを表示
   - アクションボタン（システム設定を開く）をサポート
   - _Requirements: 10.1, 10.2, 10.3, 10.4_
 
