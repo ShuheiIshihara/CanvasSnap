@@ -178,14 +178,14 @@
   - GenerateFilePathメソッドで基本的なファイル名生成（screenshot_yyyyMMdd_HHmmssfff.png形式）
   - _Requirements: 1.1, 6.1, 6.6, 10.1_
 
-- [ ] 10.2 ファイル保存とファイル名生成
+- [x] 10.2 ファイル保存とファイル名生成
   - GenerateFilePathメソッドで`screenshot_yyyyMMdd_HHmmssfff.png`形式のファイル名を生成
   - 同名ファイルが存在する場合は`_001`, `_002`連番を付与
   - File.WriteAllBytesAsyncでPNG画像を保存
   - 保存先ディレクトリが存在しない場合は作成（Directory.CreateDirectory）
   - _Requirements: 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 10.3 エラーハンドリングとログ記録
+- [x] 10.3 エラーハンドリングとログ記録
   - 各例外タイプに応じてILogger.LogError/LogWarningでログ記録
   - クリティカルエラーはINotificationService.ShowCriticalErrorAsyncでダイアログ表示
   - 軽微なエラーはINotificationService.ShowNotificationAsyncで通知表示

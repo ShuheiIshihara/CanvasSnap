@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CanvasSnap.Exceptions;
 using CanvasSnap.Models;
+using Microsoft.Extensions.Logging;
 
 namespace CanvasSnap.Services;
 
@@ -30,19 +31,22 @@ public class CaptureOrchestrator
     private readonly IScreenCaptureService _screenCaptureService;
     private readonly IImageProcessingService _imageProcessingService;
     private readonly INotificationService _notificationService;
+    private readonly ILogger<CaptureOrchestrator> _logger;
 
     public CaptureOrchestrator(
         IPermissionService permissionService,
         IDisplayService displayService,
         IScreenCaptureService screenCaptureService,
         IImageProcessingService imageProcessingService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        ILogger<CaptureOrchestrator> logger)
     {
         _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
         _displayService = displayService ?? throw new ArgumentNullException(nameof(displayService));
         _screenCaptureService = screenCaptureService ?? throw new ArgumentNullException(nameof(screenCaptureService));
         _imageProcessingService = imageProcessingService ?? throw new ArgumentNullException(nameof(imageProcessingService));
         _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
@@ -59,6 +63,7 @@ public class CaptureOrchestrator
             // 1. 権限チェック
             if (!await _permissionService.CheckPermissionsAsync())
             {
+                _logger.LogError("Permission denied: Required permissions not granted");
                 await _notificationService.ShowCriticalErrorAsync("権限エラー", "必要な権限が付与されていません");
                 return Result<string, CaptureError>.Failure(CaptureError.PermissionDenied);
             }
@@ -83,52 +88,42 @@ public class CaptureOrchestrator
             // 5. ファイル保存
             var filePath = GenerateFilePath(settings.SaveDirectory);
 
-            try
+            // ディレクトリが存在しない場合は作成
+            var directory = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
-                // ディレクトリが存在しない場合は作成
-                var directory = Path.GetDirectoryName(filePath);
-                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
+                Directory.CreateDirectory(directory);
+            }
 
-                await File.WriteAllBytesAsync(filePath, imageData);
-            }
-            catch (Exception ex) when (ex is UnauthorizedAccessException ||
-                                       ex is ArgumentException ||
-                                       ex is PathTooLongException ||
-                                       ex is NotSupportedException)
-            {
-                await _notificationService.ShowNotificationAsync($"保存に失敗しました: {ex.Message}", NotificationType.Error);
-                return Result<string, CaptureError>.Failure(CaptureError.SaveFailed);
-            }
+            await File.WriteAllBytesAsync(filePath, imageData);
 
             // 6. 通知
             await _notificationService.ShowNotificationAsync("スクリーンショットを保存しました", NotificationType.Info);
 
+            _logger.LogInformation("Screenshot saved successfully to {FilePath}", filePath);
             return Result<string, CaptureError>.Success(filePath);
         }
-        catch (PermissionDeniedException)
+        catch (PermissionDeniedException ex)
         {
-            // ログ記録は Phase 2 で実装
+            _logger.LogError(ex, "Permission denied during capture operation");
             await _notificationService.ShowCriticalErrorAsync("権限エラー", "必要な権限が付与されていません");
             return Result<string, CaptureError>.Failure(CaptureError.PermissionDenied);
         }
-        catch (ScreenCaptureException)
+        catch (ScreenCaptureException ex)
         {
-            // ログ記録は Phase 2 で実装
+            _logger.LogWarning(ex, "Screen capture failed");
             await _notificationService.ShowNotificationAsync("キャプチャに失敗しました", NotificationType.Error);
             return Result<string, CaptureError>.Failure(CaptureError.CaptureFailed);
         }
-        catch (IOException)
+        catch (IOException ex)
         {
-            // ログ記録は Phase 2 で実装
+            _logger.LogError(ex, "File save failed during capture operation");
             await _notificationService.ShowCriticalErrorAsync("保存エラー", "ファイルの保存に失敗しました");
             return Result<string, CaptureError>.Failure(CaptureError.SaveFailed);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // ログ記録は Phase 2 で実装
+            _logger.LogError(ex, "Unexpected error during capture operation");
             await _notificationService.ShowCriticalErrorAsync("エラー", "予期しないエラーが発生しました");
             return Result<string, CaptureError>.Failure(CaptureError.Unknown);
         }
@@ -143,11 +138,13 @@ public class CaptureOrchestrator
     /// ファイルパスを生成（screenshot_yyyyMMdd_HHmmssfff.png形式）
     /// </summary>
     /// <param name="saveDirectory">保存先ディレクトリ</param>
+    /// <param name="timestamp">ファイル名に使用する時刻（省略時は現在時刻）</param>
     /// <returns>生成されたファイルパス</returns>
-    private static string GenerateFilePath(string saveDirectory)
+    internal static string GenerateFilePath(string saveDirectory, DateTime? timestamp = null)
     {
-        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmssfff");
-        var baseName = $"screenshot_{timestamp}";
+        var timestampValue = timestamp ?? DateTime.Now;
+        var timestampText = timestampValue.ToString("yyyyMMdd_HHmmssfff");
+        var baseName = $"screenshot_{timestampText}";
         var extension = ".png";
 
         var candidate = Path.Combine(saveDirectory, $"{baseName}{extension}");
