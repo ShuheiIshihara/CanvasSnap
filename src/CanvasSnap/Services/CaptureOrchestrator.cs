@@ -9,6 +9,19 @@ using Microsoft.Extensions.Logging;
 namespace CanvasSnap.Services;
 
 /// <summary>
+/// キャプチャフロー全体を調整するインターフェース
+/// </summary>
+public interface ICaptureOrchestrator
+{
+    /// <summary>
+    /// キャプチャフローを実行（権限確認、キャプチャ、マスク、保存、通知）
+    /// </summary>
+    /// <param name="settings">キャプチャ設定（領域、マスク、保存先）</param>
+    /// <returns>成功時はファイルパス、失敗時はエラー情報</returns>
+    Task<Result<string, CaptureError>> ExecuteCaptureAsync(CaptureSettings settings);
+}
+
+/// <summary>
 /// キャプチャフロー全体を調整するオーケストレータ
 /// Requirements: 1.1 (安全なスクリーンキャプチャ)
 /// Requirements: 6.1-6.8 (ファイル保存)
@@ -24,7 +37,7 @@ namespace CanvasSnap.Services;
 /// - すべての例外をtry-catchでキャッチし、Result<string, CaptureError>に変換
 /// - 例外は外部に漏らさない
 /// </remarks>
-public class CaptureOrchestrator
+public class CaptureOrchestrator : ICaptureOrchestrator
 {
     private readonly IPermissionService _permissionService;
     private readonly IDisplayService _displayService;

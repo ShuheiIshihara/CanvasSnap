@@ -194,21 +194,21 @@
 
 ### 11. UI層実装（ViewModels）
 
-- [ ] 11.1 MainWindowViewModelの実装
+- [x] 11.1 MainWindowViewModelの実装
   - ReactiveObjectを継承し、ShowSettingsCommand、ExitCommandを定義
   - IHotkeyService.HotkeyPressedイベントを購読
   - OnHotkeyPressedでDispatcher.UIThread.InvokeAsyncを使用してUIスレッドにマーシャリング
-  - CaptureOrchestrator.ExecuteCaptureAsyncを呼び出し、Resultを判定
+  - ICaptureOrchestrator.ExecuteCaptureAsyncを呼び出し、Resultを判定
   - _Requirements: 5.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 11.2 SettingsViewModelの実装
-  - ReactiveObjectを継承し、設定値をReactiveプロパティで公開（HotkeyText, RegionText, MaskText, IsMaskEnabled, SaveDirectory）
+- [x] 11.2 SettingsViewModelの実装
+  - ReactiveObjectを継承し、設定値をReactiveプロパティで公開（HotkeyText, RegionText, MaskText, IsMaskEnabled, SaveDirectory)
   - SelectRegionCommand、SelectMaskCommand、TestCaptureCommand、SaveCommand、BrowseDirectoryCommandを定義
   - LoadSettingsAsyncで起動時に設定を読み込み、SaveSettingsAsyncで保存
   - TestCaptureCommandでCaptureOrchestratorを呼び出して動作確認
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.10_
 
-- [ ] 11.3 RegionSelectorViewModelの実装
+- [x] 11.3 RegionSelectorViewModelの実装
   - OnMouseDown、OnMouseMove、OnMouseUpメソッドで矩形選択を実装
   - ドラッグ中にRectangleX/Y/Width/Heightプロパティを更新
   - CoordinatesTextプロパティで座標とサイズをリアルタイム表示

@@ -6,7 +6,9 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using CanvasSnap.ViewModels;
 using CanvasSnap.Views;
+using CanvasSnap.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace CanvasSnap;
@@ -25,17 +27,36 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        // ロギング設定
+        services.AddLogging(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
+
         // プラットフォーム検出とサービス登録
         if (OperatingSystem.IsMacOS())
         {
-            // macOS固有のサービス登録（タスク5以降で実装）
+            // macOS固有のサービス登録
+            services.AddSingleton<IScreenCaptureService, MacScreenCaptureService>();
+            services.AddSingleton<IHotkeyService, MacHotkeyService>();
+            services.AddSingleton<IDisplayService, MacDisplayService>();
+            services.AddSingleton<IPermissionService, MacPermissionService>();
+            services.AddSingleton<INotificationService, MacNotificationService>();
         }
         else if (OperatingSystem.IsWindows())
         {
             // Windows固有のサービス登録（Phase 2）
+            throw new PlatformNotSupportedException("Windows support is planned for Phase 2");
         }
 
-        // 共通サービスの登録（タスク3以降で実装）
+        // 共通サービスの登録
+        services.AddSingleton<IImageProcessingService, ImageProcessingService>();
+        services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSingleton<ICaptureOrchestrator, CaptureOrchestrator>();
+
+        // ViewModels
+        services.AddTransient<MainWindowViewModel>();
 
         Services = services.BuildServiceProvider();
     }
@@ -44,12 +65,12 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
+            // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = Services.GetRequiredService<MainWindowViewModel>(),
             };
         }
 
