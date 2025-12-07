@@ -1,0 +1,128 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CanvasSnap.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
+        x:Class="CanvasSnap.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="CanvasSnap - 設定"
+        Width="600" Height="500"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:SettingsViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="20">
+            <!-- ヘッダー -->
+            <TextBlock Text="CanvasSnap 設定"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10"/>
+
+            <!-- ホットキー設定 (Requirement 8.1) -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="ホットキー" FontWeight="SemiBold" FontSize="16"/>
+                <Border BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12,8">
+                    <TextBlock Text="{Binding HotkeyText}"
+                               FontFamily="Consolas, Menlo, Monaco, monospace"
+                               VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="※ ホットキーのカスタマイズは今後のアップデートで対応予定です"
+                           FontSize="12"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+            </StackPanel>
+
+            <!-- キャプチャ領域設定 (Requirement 8.2) -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="キャプチャ領域" FontWeight="SemiBold" FontSize="16"/>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Border Grid.Column="0"
+                            BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="12,8"
+                            Margin="0,0,8,0">
+                        <TextBlock Text="{Binding RegionText}"
+                                   FontFamily="Consolas, Menlo, Monaco, monospace"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <Button Grid.Column="1"
+                            Content="領域選択"
+                            Command="{Binding SelectRegionCommand}"
+                            Padding="16,8"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- マスク設定 (Requirement 8.3, 8.4) -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="プライバシーマスク" FontWeight="SemiBold" FontSize="16"/>
+                <CheckBox Content="マスク機能を有効にする"
+                          IsChecked="{Binding IsMaskEnabled}"/>
+                <Grid ColumnDefinitions="*,Auto" IsEnabled="{Binding IsMaskEnabled}">
+                    <Border Grid.Column="0"
+                            BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="12,8"
+                            Margin="0,0,8,0">
+                        <TextBlock Text="{Binding MaskText}"
+                                   FontFamily="Consolas, Menlo, Monaco, monospace"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <Button Grid.Column="1"
+                            Content="マスク選択"
+                            Command="{Binding SelectMaskCommand}"
+                            Padding="16,8"/>
+                </Grid>
+                <TextBlock Text="※ マスク領域を選択すると、その部分が黒塗りされます"
+                           FontSize="12"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+            </StackPanel>
+
+            <!-- 保存先設定 (Requirement 8.5, 8.7) -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="保存先" FontWeight="SemiBold" FontSize="16"/>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox Grid.Column="0"
+                             Text="{Binding SaveDirectory}"
+                             IsReadOnly="True"
+                             Margin="0,0,8,0"/>
+                    <Button Grid.Column="1"
+                            Content="参照..."
+                            Click="OnBrowseDirectory"
+                            Padding="16,8"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- アクションボタン (Requirement 8.6, 8.10) -->
+            <StackPanel Spacing="12" Margin="0,20,0,0">
+                <Button Content="テストキャプチャ"
+                        Command="{Binding TestCaptureCommand}"
+                        HorizontalAlignment="Stretch"
+                        Padding="12"
+                        FontWeight="SemiBold"/>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Button Grid.Column="0"
+                            Content="キャンセル"
+                            HorizontalAlignment="Stretch"
+                            Padding="12"
+                            Click="OnCancel"/>
+                    <Button Grid.Column="1"
+                            Content="保存"
+                            Command="{Binding SaveCommand}"
+                            HorizontalAlignment="Stretch"
+                            Padding="12"
+                            FontWeight="SemiBold"
+                            Classes="accent"/>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Threading;
 using CanvasSnap.Services;
+using CanvasSnap.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
@@ -19,6 +21,7 @@ public class MainWindowViewModel : ViewModelBase
     private readonly ICaptureOrchestrator _orchestrator;
     private readonly IHotkeyService _hotkeyService;
     private readonly ISettingsService _settingsService;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<MainWindowViewModel> _logger;
     private bool _disposed;
 
@@ -26,11 +29,13 @@ public class MainWindowViewModel : ViewModelBase
         ICaptureOrchestrator orchestrator,
         IHotkeyService hotkeyService,
         ISettingsService settingsService,
+        IServiceProvider serviceProvider,
         ILogger<MainWindowViewModel> logger)
     {
         _orchestrator = orchestrator ?? throw new ArgumentNullException(nameof(orchestrator));
         _hotkeyService = hotkeyService ?? throw new ArgumentNullException(nameof(hotkeyService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         // コマンドの初期化
@@ -94,16 +99,34 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 設定ウィンドウを表示
+    /// 設定ウィンドウを表示 (Task 12.2実装)
     /// </summary>
-    private void ShowSettings()
+    private async void ShowSettings()
     {
-        // TODO: Task 11.2でSettingsViewModelを実装後、ここで設定ウィンドウを表示
-        // var settingsWindow = new SettingsWindow
-        // {
-        //     DataContext = new SettingsViewModel(_settingsService, ...)
-        // };
-        // settingsWindow.Show();
+        try
+        {
+            var settingsViewModel = _serviceProvider.GetRequiredService<SettingsViewModel>();
+
+            // ViewModelを初期化（設定を読み込む）
+            await settingsViewModel.InitializeAsync();
+
+            var settingsWindow = new SettingsWindow
+            {
+                DataContext = settingsViewModel
+            };
+
+            settingsWindow.Show();
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Failed to resolve SettingsViewModel from DI container");
+            // TODO: ユーザーフレンドリーなエラーダイアログを表示
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to show settings window");
+            // TODO: ユーザーフレンドリーなエラーダイアログを表示
+        }
     }
 
     /// <summary>

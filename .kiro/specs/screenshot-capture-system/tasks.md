@@ -224,7 +224,7 @@
   - ShowInTaskbar=false、WindowState=Minimizedでバックグラウンド常駐
   - _Requirements: 9.1, 9.2_
 
-- [ ] 12.2 SettingsWindow.axamlの実装
+- [x] 12.2 SettingsWindow.axamlの実装
   - ホットキー、キャプチャ領域、マスク領域、保存先の表示UIを実装
   - 領域選択ボタン、マスク選択ボタン、テストキャプチャボタン、保存ボタンを配置
   - 保存先フォルダ選択ダイアログ（Avalonia.Dialogs.StorageProvider）
