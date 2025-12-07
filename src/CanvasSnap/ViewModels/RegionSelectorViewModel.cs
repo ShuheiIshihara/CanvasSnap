@@ -59,6 +59,12 @@ public class RegionSelectorViewModel : ViewModelBase
     public string CoordinatesText { get; set; }
 
     /// <summary>
+    /// 座標表示を矩形の上に配置するかどうか（falseの場合は下に配置）
+    /// </summary>
+    [Reactive]
+    public bool IsCoordinatesAbove { get; set; } = true;
+
+    /// <summary>
     /// 領域選択完了イベント
     /// </summary>
     public event EventHandler<CaptureRegion>? RegionSelected;
@@ -90,6 +96,9 @@ public class RegionSelectorViewModel : ViewModelBase
         RectangleY = Math.Min(_startPoint.Y, current.Y);
         RectangleWidth = Math.Abs(current.X - _startPoint.X);
         RectangleHeight = Math.Abs(current.Y - _startPoint.Y);
+
+        // 座標表示の位置を決定（上部に30px未満の場合は下に表示）
+        IsCoordinatesAbove = RectangleY >= 40;
 
         // 座標表示を更新
         CoordinatesText = $"({RectangleX}, {RectangleY}, {RectangleWidth}, {RectangleHeight})";
@@ -139,5 +148,19 @@ public class RegionSelectorViewModel : ViewModelBase
 
         // 状態をリセット
         _startPoint = null;
+    }
+
+    /// <summary>
+    /// 選択をキャンセル（ESCキー押下時など）
+    /// </summary>
+    public void OnCancel()
+    {
+        // 状態をリセット
+        _startPoint = null;
+        RectangleX = 0;
+        RectangleY = 0;
+        RectangleWidth = 0;
+        RectangleHeight = 0;
+        CoordinatesText = string.Empty;
     }
 }

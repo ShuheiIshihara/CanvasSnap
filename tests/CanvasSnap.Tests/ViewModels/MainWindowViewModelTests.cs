@@ -19,6 +19,7 @@ public class MainWindowViewModelTests
     private readonly Mock<ICaptureOrchestrator> _mockOrchestrator;
     private readonly Mock<IHotkeyService> _mockHotkeyService;
     private readonly Mock<ISettingsService> _mockSettingsService;
+    private readonly Mock<IServiceProvider> _mockServiceProvider;
     private readonly Mock<ILogger<MainWindowViewModel>> _mockLogger;
 
     public MainWindowViewModelTests()
@@ -27,6 +28,7 @@ public class MainWindowViewModelTests
         _mockOrchestrator = new Mock<ICaptureOrchestrator>();
         _mockHotkeyService = new Mock<IHotkeyService>();
         _mockSettingsService = new Mock<ISettingsService>();
+        _mockServiceProvider = new Mock<IServiceProvider>();
         _mockLogger = new Mock<ILogger<MainWindowViewModel>>();
     }
 
@@ -38,6 +40,7 @@ public class MainWindowViewModelTests
             _mockOrchestrator.Object,
             _mockHotkeyService.Object,
             _mockSettingsService.Object,
+            _mockServiceProvider.Object,
             _mockLogger.Object
         );
 
@@ -59,6 +62,7 @@ public class MainWindowViewModelTests
             _mockOrchestrator.Object,
             _mockHotkeyService.Object,
             _mockSettingsService.Object,
+            _mockServiceProvider.Object,
             _mockLogger.Object
         );
 
@@ -89,6 +93,7 @@ public class MainWindowViewModelTests
             _mockOrchestrator.Object,
             _mockHotkeyService.Object,
             _mockSettingsService.Object,
+            _mockServiceProvider.Object,
             _mockLogger.Object
         );
 
@@ -111,6 +116,7 @@ public class MainWindowViewModelTests
             _mockOrchestrator.Object,
             _mockHotkeyService.Object,
             _mockSettingsService.Object,
+            _mockServiceProvider.Object,
             _mockLogger.Object
         );
 
@@ -129,6 +135,7 @@ public class MainWindowViewModelTests
             _mockOrchestrator.Object,
             _mockHotkeyService.Object,
             _mockSettingsService.Object,
+            _mockServiceProvider.Object,
             _mockLogger.Object
         );
 
@@ -162,6 +169,7 @@ public class MainWindowViewModelTests
             _mockOrchestrator.Object,
             _mockHotkeyService.Object,
             _mockSettingsService.Object,
+            _mockServiceProvider.Object,
             _mockLogger.Object
         );
 

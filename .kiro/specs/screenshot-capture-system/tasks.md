@@ -231,7 +231,7 @@
   - ReactiveUIバインディングでViewModelプロパティと接続
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.7, 8.10_
 
-- [ ] 12.3 RegionSelectorWindow.axamlの実装
+- [x] 12.3 RegionSelectorWindow.axamlの実装
   - 全画面透明オーバーレイウィンドウ（SystemDecorations=None, TransparencyLevelHint=Transparent）
   - Canvasで矩形選択を描画（Rectangle要素を動的更新）
   - 座標とサイズ表示用TextBlock

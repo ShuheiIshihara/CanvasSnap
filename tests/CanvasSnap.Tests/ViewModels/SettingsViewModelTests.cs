@@ -98,7 +98,7 @@ public class SettingsViewModelTests
     }
 
     [Fact]
-    public void HotkeyText_ShouldReflectHotkeyConfig()
+    public async Task HotkeyText_ShouldReflectHotkeyConfig()
     {
         // Arrange
         var settings = new CaptureSettings

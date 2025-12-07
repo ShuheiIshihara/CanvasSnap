@@ -1,0 +1,83 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CanvasSnap.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+        x:Class="CanvasSnap.Views.RegionSelectorWindow"
+        x:DataType="vm:RegionSelectorViewModel"
+        Title="領域選択"
+        SystemDecorations="None"
+        TransparencyLevelHint="Transparent"
+        WindowState="Maximized"
+        Background="Transparent"
+        Topmost="True">
+
+    <Design.DataContext>
+        <vm:RegionSelectorViewModel/>
+    </Design.DataContext>
+
+    <!-- 全画面透明オーバーレイキャンバス (Requirement 2.1) -->
+    <Canvas Background="#30000000"
+            PointerPressed="OnPointerPressed"
+            PointerMoved="OnPointerMoved"
+            PointerReleased="OnPointerReleased">
+
+        <!-- 選択矩形の描画 (Requirement 2.2) -->
+        <Rectangle x:Name="SelectionRectangle"
+                   Canvas.Left="{Binding RectangleX}"
+                   Canvas.Top="{Binding RectangleY}"
+                   Width="{Binding RectangleWidth}"
+                   Height="{Binding RectangleHeight}"
+                   Stroke="#FF0078D4"
+                   StrokeThickness="2"
+                   Fill="#200078D4"/>
+
+        <!-- 座標とサイズ表示（上） (Requirement 2.3) -->
+        <Border Canvas.Left="{Binding RectangleX}"
+                Canvas.Top="{Binding RectangleY}"
+                Background="#E0000000"
+                CornerRadius="4"
+                Padding="8,4"
+                Margin="0,-30,0,0"
+                IsVisible="{Binding IsCoordinatesAbove}">
+            <TextBlock Text="{Binding CoordinatesText}"
+                       Foreground="White"
+                       FontFamily="Consolas, Menlo, Monaco, monospace"
+                       FontSize="14"/>
+        </Border>
+
+        <!-- 座標とサイズ表示（下） (Requirement 2.3) -->
+        <Border Canvas.Left="{Binding RectangleX}"
+                Canvas.Top="{Binding RectangleY}"
+                Background="#E0000000"
+                CornerRadius="4"
+                Padding="8,4"
+                Margin="0,0,0,-30"
+                IsVisible="{Binding !IsCoordinatesAbove}">
+            <Border.RenderTransform>
+                <TranslateTransform Y="{Binding RectangleHeight}"/>
+            </Border.RenderTransform>
+            <TextBlock Text="{Binding CoordinatesText}"
+                       Foreground="White"
+                       FontFamily="Consolas, Menlo, Monaco, monospace"
+                       FontSize="14"/>
+        </Border>
+
+        <!-- ヘルプテキスト -->
+        <Border HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Background="#E0000000"
+                CornerRadius="4"
+                Padding="16,8"
+                Margin="0,20,0,0">
+            <TextBlock Foreground="White"
+                       FontSize="16"
+                       TextAlignment="Center">
+                <Run Text="ドラッグして領域を選択してください"/>
+                <LineBreak/>
+                <Run Text="ESC: キャンセル" FontSize="14" Foreground="#CCCCCC"/>
+            </TextBlock>
+        </Border>
+    </Canvas>
+</Window>
