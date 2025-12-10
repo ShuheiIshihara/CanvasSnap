@@ -246,7 +246,7 @@
 
 ### 13. 統合とテスト
 
-- [ ] 13.1 単体テストの実装（Services）
+- [x] 13.1 単体テストの実装（Services）
   - xUnit、Moqを使用してIScreenCaptureService、IImageProcessingService、IDisplayService、ISettingsServiceの単体テストを実装
   - CaptureOrchestrator.ExecuteCaptureAsyncの正常系・異常系テスト（Result型の検証）
   - IDisplayService.LogicalToPhysicalの座標変換テスト（Retina/非Retina）
