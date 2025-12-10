@@ -11,6 +11,8 @@ using CanvasSnap.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using ReactiveUI;
+using Avalonia.ReactiveUI;
 
 namespace CanvasSnap;
 
@@ -66,6 +68,9 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // ReactiveUIのMainThreadSchedulerをAvaloniaのスケジューラーに設定
+        RxApp.MainThreadScheduler = AvaloniaScheduler.Instance;
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
