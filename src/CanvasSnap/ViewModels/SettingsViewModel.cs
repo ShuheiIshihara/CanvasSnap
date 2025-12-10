@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Threading;
 using CanvasSnap.Models;
 using CanvasSnap.Services;
 using Microsoft.Extensions.Logging;
@@ -211,23 +212,27 @@ public class SettingsViewModel : ViewModelBase
         var testSettings = CreateSettingsFromUI();
         var result = await _orchestrator.ExecuteCaptureAsync(testSettings);
 
-        if (result.IsSuccess)
+        // UIスレッドで結果処理を実行
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            await _notificationService.ShowNotificationAsync($"テストキャプチャを保存しました: {result.Value}", NotificationType.Success);
-        }
-        else
-        {
-            var message = result.Error switch
+            if (result.IsSuccess)
             {
-                CaptureError.PermissionDenied => "必要な権限がありません",
-                CaptureError.DisplayUnavailable => "ディスプレイが利用できません",
-                CaptureError.CaptureFailed => "キャプチャに失敗しました",
-                CaptureError.SaveFailed => "保存に失敗しました",
-                _ => "不明なエラーが発生しました"
-            };
+                await _notificationService.ShowNotificationAsync($"テストキャプチャを保存しました: {result.Value}", NotificationType.Success);
+            }
+            else
+            {
+                var message = result.Error switch
+                {
+                    CaptureError.PermissionDenied => "必要な権限がありません",
+                    CaptureError.DisplayUnavailable => "ディスプレイが利用できません",
+                    CaptureError.CaptureFailed => "キャプチャに失敗しました",
+                    CaptureError.SaveFailed => "保存に失敗しました",
+                    _ => "不明なエラーが発生しました"
+                };
 
-            await _notificationService.ShowNotificationAsync($"テストキャプチャ失敗: {message}", NotificationType.Error);
-        }
+                await _notificationService.ShowNotificationAsync($"テストキャプチャ失敗: {message}", NotificationType.Error);
+            }
+        });
     }
 
     /// <summary>
@@ -244,7 +249,10 @@ public class SettingsViewModel : ViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to save settings");
-            await _notificationService.ShowNotificationAsync("設定の保存に失敗しました", NotificationType.Error);
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                await _notificationService.ShowNotificationAsync("設定の保存に失敗しました", NotificationType.Error);
+            });
             return;
         }
 
@@ -252,12 +260,18 @@ public class SettingsViewModel : ViewModelBase
         {
             // ホットキーを再登録
             await _hotkeyService.RegisterHotkeyAsync(settings.HotkeyConfig);
-            await _notificationService.ShowNotificationAsync("設定を保存しました", NotificationType.Success);
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                await _notificationService.ShowNotificationAsync("設定を保存しました", NotificationType.Success);
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to register hotkey after saving settings");
-            await _notificationService.ShowNotificationAsync("設定は保存しましたが、ホットキーの登録に失敗しました", NotificationType.Warning);
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                await _notificationService.ShowNotificationAsync("設定は保存しましたが、ホットキーの登録に失敗しました", NotificationType.Warning);
+            });
         }
     }
 
