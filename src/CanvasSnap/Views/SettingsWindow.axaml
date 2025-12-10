@@ -55,7 +55,7 @@
                     </Border>
                     <Button Grid.Column="1"
                             Content="領域選択"
-                            Command="{Binding SelectRegionCommand}"
+                            Click="OnSelectRegion"
                             Padding="16,8"/>
                 </Grid>
             </StackPanel>
@@ -78,7 +78,7 @@
                     </Border>
                     <Button Grid.Column="1"
                             Content="マスク選択"
-                            Command="{Binding SelectMaskCommand}"
+                            Click="OnSelectMask"
                             Padding="16,8"/>
                 </Grid>
                 <TextBlock Text="※ マスク領域を選択すると、その部分が黒塗りされます"

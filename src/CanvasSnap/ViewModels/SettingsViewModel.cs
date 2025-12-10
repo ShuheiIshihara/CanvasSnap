@@ -26,6 +26,11 @@ public class SettingsViewModel : ViewModelBase
     private readonly ILogger<SettingsViewModel> _logger;
     private CaptureSettings _currentSettings;
 
+    /// <summary>
+    /// DisplayService（Viewから領域選択時に使用）
+    /// </summary>
+    public IDisplayService DisplayService => _displayService;
+
     public SettingsViewModel(
         ISettingsService settingsService,
         IDisplayService displayService,
@@ -163,21 +168,39 @@ public class SettingsViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 領域選択を開始
+    /// 領域選択を開始（実装はView側で行う）
     /// </summary>
     private async Task SelectRegionAsync()
     {
-        // TODO: Task 12.3でRegionSelectorWindowを実装後、ここで領域選択UIを表示
+        // Note: 実際の領域選択UIはSettingsWindow.axaml.csのOnSelectRegionで処理
         await Task.CompletedTask;
     }
 
     /// <summary>
-    /// マスク領域選択を開始
+    /// マスク領域選択を開始（実装はView側で行う）
     /// </summary>
     private async Task SelectMaskAsync()
     {
-        // TODO: Task 12.3でRegionSelectorWindowを実装後、ここでマスク選択UIを表示
+        // Note: 実際のマスク選択UIはSettingsWindow.axaml.csのOnSelectMaskで処理
         await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// キャプチャ領域を更新（Viewから呼び出される）
+    /// </summary>
+    public void UpdateRegion(CaptureRegion region)
+    {
+        _currentSettings = _currentSettings with { Region = region };
+        UpdateDisplayFromSettings();
+    }
+
+    /// <summary>
+    /// マスク領域を追加（Viewから呼び出される）
+    /// </summary>
+    public void AddMaskRegion(MaskRegion maskRegion)
+    {
+        _currentSettings = _currentSettings with { MaskRegions = [maskRegion] };
+        UpdateDisplayFromSettings();
     }
 
     /// <summary>
@@ -239,11 +262,11 @@ public class SettingsViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 保存先フォルダを選択
+    /// 保存先フォルダを選択（実装はView側で行う）
     /// </summary>
     private async Task BrowseDirectoryAsync()
     {
-        // TODO: Task 12.2でフォルダ選択ダイアログを実装
+        // Note: 実際のフォルダ選択はSettingsWindow.axaml.csのOnBrowseDirectoryで処理
         await Task.CompletedTask;
     }
 

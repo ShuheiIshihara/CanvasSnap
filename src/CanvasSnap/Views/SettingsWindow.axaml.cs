@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using CanvasSnap.Models;
 using CanvasSnap.ViewModels;
 
 namespace CanvasSnap.Views;
@@ -26,6 +28,98 @@ public partial class SettingsWindow : Window
     private void OnCancel(object? sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    /// <summary>
+    /// 領域選択ボタンのクリックハンドラ (Requirement 2.1-2.5, 8.2)
+    /// </summary>
+    private async void OnSelectRegion(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not SettingsViewModel viewModel)
+        {
+            return;
+        }
+
+        try
+        {
+            // プライマリディスプレイ情報を取得
+            var displays = await viewModel.DisplayService.GetAllDisplaysAsync();
+            var primaryDisplay = displays.FirstOrDefault(d => d.IsPrimary);
+
+            if (primaryDisplay == null)
+            {
+                await ShowErrorDialogAsync("プライマリディスプレイが見つかりません。");
+                return;
+            }
+
+            // RegionSelectorViewModelとWindowを作成
+            var selectorViewModel = new RegionSelectorViewModel(viewModel.DisplayService, primaryDisplay);
+            var selectorWindow = new RegionSelectorWindow
+            {
+                DataContext = selectorViewModel
+            };
+
+            // 選択結果をハンドル
+            selectorViewModel.RegionSelected += (s, region) =>
+            {
+                viewModel.UpdateRegion(region);
+            };
+
+            // モーダル表示
+            await selectorWindow.ShowDialog(this);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to show region selector: {ex.Message}");
+            await ShowErrorDialogAsync($"領域選択画面の表示に失敗しました:\n{ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// マスク選択ボタンのクリックハンドラ (Requirement 2.1-2.5, 8.3, 8.4)
+    /// </summary>
+    private async void OnSelectMask(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not SettingsViewModel viewModel)
+        {
+            return;
+        }
+
+        try
+        {
+            // プライマリディスプレイ情報を取得
+            var displays = await viewModel.DisplayService.GetAllDisplaysAsync();
+            var primaryDisplay = displays.FirstOrDefault(d => d.IsPrimary);
+
+            if (primaryDisplay == null)
+            {
+                await ShowErrorDialogAsync("プライマリディスプレイが見つかりません。");
+                return;
+            }
+
+            // RegionSelectorViewModelとWindowを作成
+            var selectorViewModel = new RegionSelectorViewModel(viewModel.DisplayService, primaryDisplay);
+            var selectorWindow = new RegionSelectorWindow
+            {
+                DataContext = selectorViewModel
+            };
+
+            // 選択結果をマスク領域として処理
+            selectorViewModel.RegionSelected += (s, captureRegion) =>
+            {
+                // CaptureRegionをMaskRegionに変換
+                var maskRegion = new MaskRegion(captureRegion.X, captureRegion.Y, captureRegion.Width, captureRegion.Height);
+                viewModel.AddMaskRegion(maskRegion);
+            };
+
+            // モーダル表示
+            await selectorWindow.ShowDialog(this);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to show mask selector: {ex.Message}");
+            await ShowErrorDialogAsync($"マスク選択画面の表示に失敗しました:\n{ex.Message}");
+        }
     }
 
     /// <summary>
