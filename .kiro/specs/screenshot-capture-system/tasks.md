@@ -252,7 +252,7 @@
   - IDisplayService.LogicalToPhysicalの座標変換テスト（Retina/非Retina）
   - _Requirements: 11.1, 11.2_
 
-- [ ] 13.2 統合テストの実装
+- [x] 13.2 統合テストの実装
   - キャプチャフロー統合テスト（Orchestrator + モックサービス）
   - 設定永続化フローテスト（SaveSettings → LoadSettings ラウンドトリップ）
   - 座標変換フローテスト（RegionSelectorViewModel + IDisplayService）
