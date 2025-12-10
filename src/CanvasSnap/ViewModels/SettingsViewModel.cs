@@ -57,11 +57,11 @@ public class SettingsViewModel : ViewModelBase
         };
 
         // コマンドの初期化
-        SelectRegionCommand = ReactiveCommand.CreateFromTask(SelectRegionAsync);
-        SelectMaskCommand = ReactiveCommand.CreateFromTask(SelectMaskAsync);
-        TestCaptureCommand = ReactiveCommand.CreateFromTask(TestCaptureAsync);
-        SaveCommand = ReactiveCommand.CreateFromTask(SaveSettingsAsync);
-        BrowseDirectoryCommand = ReactiveCommand.CreateFromTask(BrowseDirectoryAsync);
+        SelectRegionCommand = ReactiveCommand.CreateFromTask(SelectRegionAsync, outputScheduler: RxApp.MainThreadScheduler);
+        SelectMaskCommand = ReactiveCommand.CreateFromTask(SelectMaskAsync, outputScheduler: RxApp.MainThreadScheduler);
+        TestCaptureCommand = ReactiveCommand.CreateFromTask(TestCaptureAsync, outputScheduler: RxApp.MainThreadScheduler);
+        SaveCommand = ReactiveCommand.CreateFromTask(SaveSettingsAsync, outputScheduler: RxApp.MainThreadScheduler);
+        BrowseDirectoryCommand = ReactiveCommand.CreateFromTask(BrowseDirectoryAsync, outputScheduler: RxApp.MainThreadScheduler);
     }
 
     /// <summary>

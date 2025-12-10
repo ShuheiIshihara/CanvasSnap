@@ -39,8 +39,8 @@ public class MainWindowViewModel : ViewModelBase
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         // コマンドの初期化
-        ShowSettingsCommand = ReactiveCommand.Create(ShowSettings);
-        ExitCommand = ReactiveCommand.Create(Exit);
+        ShowSettingsCommand = ReactiveCommand.Create(ShowSettings, outputScheduler: RxApp.MainThreadScheduler);
+        ExitCommand = ReactiveCommand.Create(Exit, outputScheduler: RxApp.MainThreadScheduler);
 
         // ホットキーイベントを購読
         _hotkeyService.HotkeyPressed += OnHotkeyPressed;
