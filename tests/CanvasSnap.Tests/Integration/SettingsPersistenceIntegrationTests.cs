@@ -21,7 +21,7 @@ public class SettingsPersistenceIntegrationTests : IDisposable
         Directory.CreateDirectory(_testConfigDirectory);
 
         _testConfigFilePath = Path.Combine(_testConfigDirectory, "config.json");
-        _settingsService = new SettingsService(_testConfigFilePath);
+        _settingsService = new SettingsService(_testConfigDirectory);
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ public class SettingsPersistenceIntegrationTests : IDisposable
         var nestedDirectory = Path.Combine(_testConfigDirectory, "nested", "deep", "path");
         var nestedConfigPath = Path.Combine(nestedDirectory, "config.json");
 
-        var settingsService = new SettingsService(nestedConfigPath);
+        var settingsService = new SettingsService(nestedDirectory);
         var settings = new CaptureSettings
         {
             Region = new CaptureRegion(100, 200, 800, 600),

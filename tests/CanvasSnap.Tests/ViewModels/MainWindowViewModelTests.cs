@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using CanvasSnap.Models;
 using CanvasSnap.Services;
@@ -70,7 +71,9 @@ public class MainWindowViewModelTests
         Assert.True(hotkeyPressedInvoked);
     }
 
-    [Fact]
+    // OnHotkeyPressedはDispatcher.UIThread.InvokeAsyncを使用するため、
+    // ヘッドレスAvalonia環境のUIスレッド上で実行する必要がある
+    [AvaloniaFact]
     public async Task OnHotkeyPressed_ShouldInvokeExecuteCaptureAsync()
     {
         // Arrange
@@ -100,8 +103,10 @@ public class MainWindowViewModelTests
         // Act - ホットキーイベントを発火
         _mockHotkeyService.Raise(s => s.HotkeyPressed += null, EventArgs.Empty);
 
-        // UIスレッド処理が完了するまで待機
-        await Task.Delay(100);
+        // Dispatcherにキューイングされた処理を実行
+        Dispatcher.UIThread.RunJobs();
+        await Task.Delay(50);
+        Dispatcher.UIThread.RunJobs();
 
         // Assert
         _mockSettingsService.Verify(s => s.LoadSettingsAsync(), Times.Once);
@@ -146,7 +151,9 @@ public class MainWindowViewModelTests
         Assert.True(canExecute);
     }
 
-    [Fact]
+    // OnHotkeyPressedはDispatcher.UIThread.InvokeAsyncを使用するため、
+    // ヘッドレスAvalonia環境のUIスレッド上で実行する必要がある
+    [AvaloniaFact]
     public async Task OnHotkeyPressed_WhenCaptureErrors_ShouldHandleGracefully()
     {
         // Arrange
@@ -176,8 +183,10 @@ public class MainWindowViewModelTests
         // Act - ホットキーイベントを発火
         _mockHotkeyService.Raise(s => s.HotkeyPressed += null, EventArgs.Empty);
 
-        // UIスレッド処理が完了するまで待機
-        await Task.Delay(100);
+        // Dispatcherにキューイングされた処理を実行
+        Dispatcher.UIThread.RunJobs();
+        await Task.Delay(50);
+        Dispatcher.UIThread.RunJobs();
 
         // Assert - エラーでも例外が発生しないことを確認
         _mockOrchestrator.Verify(o => o.ExecuteCaptureAsync(settings), Times.Once);

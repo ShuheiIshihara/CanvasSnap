@@ -5,8 +5,13 @@
 このドキュメントは、screenshot-capture-systemの実装タスクを定義します。Phase 1（macOS MVP）に焦点を当て、全13要件を実装可能なタスクに分解しています。
 
 **アーキテクチャ**: MVVM + Service Layer
-**総タスク数**: 12メジャータスク、47サブタスク
+**総タスク数**: 15メジャータスク、45サブタスク
 **並列実行**: (P)マーカー付きタスクは並列実行可能
+
+> **改定履歴 (2026-07-12)**: 実装レビューの結果、以下を追加。
+> - 13.5/13.6: テストスイートの回帰修正（UIスレッド修正に伴うテスト追随漏れ、テストと実装のコンストラクタ契約不一致、CaptureOrchestratorの例外マッピング漏れ）
+> - 14.4: 依存パッケージの脆弱性対応（NU1903）
+> - セクション15: 配布準備（.appバンドル化・コード署名）。TCC権限（Screen Recording等）は署名済みバンドルのアイデンティティに紐づくため、14.1のInfo.plist設定だけでは権限付与が安定しない。E2Eテスト（13.3）の前提となるため追加。
 
 ---
 
@@ -272,6 +277,18 @@
   - アイドル時のメモリ50MB未満、CPU 3%未満を検証
   - _Requirements: 11.1, 11.2, 11.3_
 
+- [x] 13.5 失敗テストの修正（回帰対応・2026-07-12時点で10件失敗）
+  - SettingsPersistenceIntegrationTests（4件）: テストが`SettingsService(string)`にファイルパスを渡しているが、実装はディレクトリとして解釈し`config.json/config.json`を参照している。テスト側を修正（ディレクトリを渡す）するか、コンストラクタの契約を明確化
+  - CaptureFlow_SaveFailed（1件）: `File.WriteAllBytesAsync`が書き込み不可ディレクトリで`UnauthorizedAccessException`（`IOException`の派生ではない）をスローするが、CaptureOrchestratorは`IOException`のみ`SaveFailed`にマッピングしている。`UnauthorizedAccessException`のcatchを追加
+  - MainWindowViewModelTests（2件）: UIスレッド修正（コミット6ce024b〜5a8e289）で`Dispatcher.UIThread.InvokeAsync`が導入されたが、単体テストではDispatcherが動作せずコールバックが実行されない。Avalonia.Headlessの導入またはIDispatcher抽象化で対応
+  - AppTests（3件）: App.axamlのTrayIcon定義（タスク12.1）により`IAssetLoader`未初期化エラー。Avalonia.Headlessによるテストセットアップが必要
+  - _Requirements: 11.1, 11.2_
+
+- [x] 13.6 環境依存テストの分離
+  - MacScreenCaptureServiceTestsは実際の`screencapture`コマンドを実行するため、Screen Recording権限とディスプレイが必要（CI・サンドボックス環境で失敗する）
+  - `[Trait("Category", "RequiresDisplay")]`等で分類し、通常のテスト実行から分離可能にする
+  - _Requirements: 11.1_
+
 ### 14. macOS固有の最終調整
 
 - [ ] 14.1 Info.plistの設定
@@ -292,11 +309,36 @@
   - ファイルローテーション設定（日次、最大10ファイル保持）
   - _Requirements: 11.3_
 
+- [x] 14.4 (P) 依存パッケージの脆弱性対応
+  - Tmds.DBus.Protocol 0.21.2の高重大度脆弱性（NU1903 / GHSA-xrw6-gwf8-vvr9）を解消
+  - Avaloniaのマイナーバージョン更新、または該当パッケージの明示的なバージョン固定で対応
+  - 更新後にビルドと全テストの通過を確認
+  - _Requirements: 13.2_
+
+### 15. 配布準備（macOS）
+
+- [ ] 15.1 .appバンドルの生成
+  - `dotnet publish`と`Dotnet.Bundle`（または手動のバンドル構成スクリプト）で`CanvasSnap.app`を生成
+  - 14.1のInfo.plist（NSScreenCaptureUsageDescription等）をバンドルに統合
+  - バンドル起動でトレイアイコン表示・ホットキー・キャプチャが動作することを確認
+  - _Requirements: 12.3, 13.1_
+
+- [ ] 15.2 コード署名
+  - codesignでバンドルに署名（開発中はad-hoc署名でも可）
+  - 署名によりTCC権限（Screen Recording / Accessibility）の付与がリビルド間で安定することを確認
+  - 未署名バイナリではリビルドごとに権限再付与が必要になる問題を解消
+  - _Requirements: 12.1, 12.2, 12.3_
+
+- [ ] 15.3* 公証（Notarization、オプション）
+  - 配布する場合はDeveloper ID署名とnotarytoolによる公証を実施
+  - Gatekeeper警告なしで起動できることを確認
+  - _Requirements: 12.3_
+
 ---
 
 ## Requirements Coverage
 
-全13要件を47サブタスクでカバーしています：
+全13要件を45サブタスクでカバーしています：
 
 | Requirement | Covered by Tasks |
 |-------------|------------------|
@@ -344,8 +386,9 @@
 - 12.1, 12.2, 12.3, 12.4 (Views)
 
 **グループ6: 最終調整**
-- 13.1, 13.2, 13.3, 13.4 (テスト)
-- 14.1, 14.3 (macOS固有設定)
+- 13.1, 13.2, 13.5, 13.6 (テスト修正) → 13.3 (手動E2E), 13.4 (ベンチマーク)
+- 14.1, 14.3, 14.4 (macOS固有設定・依存更新)
+- 15.1 → 15.2 → 15.3 (配布準備。13.3のE2Eは15.1/15.2完了後に実施推奨)
 
 ---
 

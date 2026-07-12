@@ -30,5 +30,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+    <!-- Avalonia 11.3.9の推移的依存 0.21.2 に高重大度脆弱性（NU1903 / GHSA-xrw6-gwf8-vvr9）があるため修正版に固定 -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
   </ItemGroup>
 </Project>

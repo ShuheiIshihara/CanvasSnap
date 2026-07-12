@@ -134,6 +134,13 @@ public class CaptureOrchestrator : ICaptureOrchestrator
             await _notificationService.ShowCriticalErrorAsync("保存エラー", "ファイルの保存に失敗しました");
             return Result<string, CaptureError>.Failure(CaptureError.SaveFailed);
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            // 書き込み権限なしはIOExceptionの派生ではないため個別に処理
+            _logger.LogError(ex, "File save failed during capture operation");
+            await _notificationService.ShowCriticalErrorAsync("保存エラー", "ファイルの保存に失敗しました");
+            return Result<string, CaptureError>.Failure(CaptureError.SaveFailed);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error during capture operation");

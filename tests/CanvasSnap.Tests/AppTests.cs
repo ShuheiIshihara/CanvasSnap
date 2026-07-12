@@ -1,11 +1,16 @@
+using Avalonia.Headless.XUnit;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace CanvasSnap.Tests;
 
+/// <summary>
+/// App.axamlのTrayIcon定義がIAssetLoader等のプラットフォームサービスを要求するため、
+/// [AvaloniaFact]でヘッドレスAvalonia環境上で実行する
+/// </summary>
 public class AppTests
 {
-    [Fact]
+    [AvaloniaFact]
     public void App_Should_InitializeServiceProvider()
     {
         // Arrange
@@ -19,7 +24,7 @@ public class AppTests
         Assert.NotNull(serviceProvider);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void App_Should_RegisterServicesBasedOnPlatform()
     {
         // Arrange
@@ -35,7 +40,7 @@ public class AppTests
         // 現時点ではサービスがないため、ServiceProviderが存在することのみ確認
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ServiceProvider_Should_BeAccessibleThroughProperty()
     {
         // Arrange

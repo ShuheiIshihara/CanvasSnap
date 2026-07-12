@@ -17,6 +17,7 @@ namespace CanvasSnap.Tests.Services;
 /// Phase 1 MVP: 単体テストはインターフェース契約とエラーハンドリングを検証
 /// 実際のキャプチャ機能は統合テストまたは手動テストで確認
 /// </remarks>
+[Trait("Category", "RequiresDisplay")]
 public class MacScreenCaptureServiceTests
 {
     [Fact]
