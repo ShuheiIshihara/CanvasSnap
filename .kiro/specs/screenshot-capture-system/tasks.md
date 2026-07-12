@@ -291,22 +291,26 @@
 
 ### 14. macOS固有の最終調整
 
-- [ ] 14.1 Info.plistの設定
-  - NSScreenCaptureUsageDescriptionに「ゲーム画面のスクリーンショット撮影に使用」を記載
-  - NSAccessibilityUsageDescriptionに「グローバルホットキー登録のため」を記載
-  - アプリアイコン（.icns）の設定
+- [x] 14.1 Info.plistの設定
+  - `src/CanvasSnap/Info.plist`を作成。NSScreenCaptureUsageDescription、NSAccessibilityUsageDescriptionを記載
+  - アプリアイコン（CFBundleIconFile = canvassnap.icns）を設定
+  - 追加: `LSUIElement=true`（トレイ常駐アプリのDock非表示・Req 9.1/9.2）、`NSHighResolutionCapable=true`（HiDPI・Req 3）、`NSAppleEventsUsageDescription`（通知にosascriptを使用するため実際に必要）
+  - 追加: CFBundleName/Identifier(com.canvassnap.CanvasSnap)/Version等のバンドルメタデータ
   - _Requirements: 12.3_
 
-- [ ] 14.2 (P) アプリアイコンとトレイアイコンの準備
-  - .icns形式のアプリアイコン作成（16x16, 32x32, 48x48, 128x128, 256x256）
-  - .ico形式のトレイアイコン作成（macOS用）
-  - アイコンリソースをプロジェクトに追加
+- [x] 14.2 (P) アプリアイコンとトレイアイコンの準備
+  - 領域選択ブラケット＋カメラレンズのデザインでマスター画像(1024px)を生成
+  - `.icns`形式のアプリアイコン作成（16〜1024pxの全Retinaバリアント、iconutil使用）→ `Assets/canvassnap.icns`
+  - `.ico`形式のトレイ/ウィンドウアイコン作成（16,32,48,64,128,256のマルチサイズ）→ `Assets/canvassnap.ico`
+  - App.axaml/MainWindow/SettingsWindowのアイコン参照を差し替え、未使用のavalonia-logo.icoを削除
   - _Requirements: 9.1_
 
-- [ ] 14.3 ログ出力とデバッグ支援
-  - Serilogをインストールし、構造化ログを設定
-  - ログ出力先を`~/Library/Logs/CanvasSnap/app.log`に設定
-  - ファイルローテーション設定（日次、最大10ファイル保持）
+- [x] 14.3 ログ出力とデバッグ支援
+  - Serilog（+ Extensions.Logging / Sinks.Console / Sinks.File）をインストールし、構造化ログを設定
+  - `LogPathProvider`でログ出力先を解決（macOS: `~/Library/Logs/CanvasSnap/app.log`、Windows: `%LocalAppData%\CanvasSnap\Logs\app.log`）
+  - ファイルローテーション設定（RollingInterval.Day、retainedFileCountLimit=10）
+  - 既存のMicrosoft.Extensions.Logging ILogger<T>注入と互換（AddSerilogでブリッジ）
+  - LogPathProviderの単体テスト追加、実起動でログ生成を検証済み
   - _Requirements: 11.3_
 
 - [x] 14.4 (P) 依存パッケージの脆弱性対応

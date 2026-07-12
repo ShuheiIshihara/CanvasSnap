@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- バンドル基本情報 -->
+    <key>CFBundleName</key>
+    <string>CanvasSnap</string>
+    <key>CFBundleDisplayName</key>
+    <string>CanvasSnap</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.canvassnap.CanvasSnap</string>
+    <key>CFBundleExecutable</key>
+    <string>CanvasSnap</string>
+    <key>CFBundleIconFile</key>
+    <string>canvassnap.icns</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
+
+    <!-- トレイ常駐アプリ: Dockアイコン・メニューバーを表示しない (Requirement 9.1, 9.2) -->
+    <key>LSUIElement</key>
+    <true/>
+
+    <!-- 高解像度対応 (Requirement 3: HiDPI) -->
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <!-- TCC権限の用途説明 (Requirement 12.3) -->
+    <!-- スクリーンキャプチャ用途 -->
+    <key>NSScreenCaptureUsageDescription</key>
+    <string>ゲーム画面のスクリーンショット撮影に使用します。</string>
+    <!-- グローバルホットキー登録のためのアクセシビリティ用途 -->
+    <key>NSAccessibilityUsageDescription</key>
+    <string>グローバルホットキーの登録のために使用します。</string>
+    <!-- 通知表示・システム設定起動にosascript(AppleScript)を使用するため -->
+    <key>NSAppleEventsUsageDescription</key>
+    <string>スクリーンショット保存の通知表示に使用します。</string>
+</dict>
+</plist>

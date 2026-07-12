@@ -16,7 +16,7 @@
     <!-- システムトレイアイコン設定 (Requirement 9.1-9.5) -->
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/avalonia-logo.ico" ToolTipText="CanvasSnap">
+            <TrayIcon Icon="/Assets/canvassnap.ico" ToolTipText="CanvasSnap">
                 <TrayIcon.Menu>
                     <NativeMenu>
                         <NativeMenuItem Header="設定" Click="OnShowSettings" />

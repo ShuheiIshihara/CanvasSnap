@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
         x:Class="CanvasSnap.Views.SettingsWindow"
         x:DataType="vm:SettingsViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/canvassnap.ico"
         Title="CanvasSnap - 設定"
         Width="600" Height="500"
         CanResize="False">

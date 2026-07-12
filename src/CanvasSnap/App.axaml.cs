@@ -5,14 +5,17 @@ using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
+using CanvasSnap.Helpers;
 using CanvasSnap.ViewModels;
 using CanvasSnap.Views;
 using CanvasSnap.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using ReactiveUI;
 using Avalonia.ReactiveUI;
+using Serilog;
 
 namespace CanvasSnap;
 
@@ -31,11 +34,26 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
-        // ロギング設定
+        // ロギング設定: Serilogで構造化ログ + ファイルローテーション (Requirement 11.3)
+        // 出力先: macOS ~/Library/Logs/CanvasSnap/app.log、日次ローテーション・最大10ファイル保持
+        var logDirectory = LogPathProvider.GetLogDirectory();
+        Directory.CreateDirectory(logDirectory);
+
+        var serilogLogger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console()
+            .WriteTo.File(
+                path: LogPathProvider.GetLogFilePath(),
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 10,
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}")
+            .CreateLogger();
+
         services.AddLogging(builder =>
         {
-            builder.AddConsole();
+            builder.ClearProviders();
             builder.SetMinimumLevel(LogLevel.Debug);
+            builder.AddSerilog(serilogLogger, dispose: true);
         });
 
         // プラットフォーム検出とサービス登録
@@ -70,6 +88,10 @@ public partial class App : Application
     {
         // ReactiveUIのMainThreadSchedulerをAvaloniaのスケジューラーに設定
         RxApp.MainThreadScheduler = AvaloniaScheduler.Instance;
+
+        // 起動ログ（ログ基盤が機能していることの確認も兼ねる）
+        var appLogger = Services.GetRequiredService<ILogger<App>>();
+        appLogger.LogInformation("CanvasSnap を起動しました (ログ出力先: {LogPath})", LogPathProvider.GetLogFilePath());
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
